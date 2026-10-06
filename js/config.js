@@ -8,12 +8,12 @@
    ===================================================================== */
 window.OEFENSITE_CONFIG = {
   firebase: {
-    apiKey: "PLAK-HIER-JE-APIKEY",
-    authDomain: "jouw-project.firebaseapp.com",
-    projectId: "jouw-project",
-    storageBucket: "jouw-project.appspot.com",
-    messagingSenderId: "000000000000",
-    appId: "PLAK-HIER-JE-APPID"
+    apiKey: "AIzaSyD2oxh85WDLumQMwcDQjkcR8UvYO2FIl6M",
+  authDomain: "wiskunde-oefensite-1ste-jaar.firebaseapp.com",
+  projectId: "wiskunde-oefensite-1ste-jaar",
+  storageBucket: "wiskunde-oefensite-1ste-jaar.firebasestorage.app",
+  messagingSenderId: "98735435302",
+  appId: "1:98735435302:web:7ed31a194603b83cd800e7"
   },
 
   // Alleen Google-accounts van dit domein mogen aanmelden.
