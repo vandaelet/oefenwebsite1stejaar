@@ -1,0 +1,50 @@
+rules_version = '2';
+
+// Beveiligingsregels voor de oefensite.
+// Gebruik je dit Firebase-project ook voor een andere site? Voeg dan alleen
+// de functies en de vier "match /oef_..."-blokken toe aan je bestaande regels.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Aangemeld met een geverifieerd svsl.be-account
+    function aangemeld() {
+      return request.auth != null
+        && request.auth.token.email_verified == true
+        && request.auth.token.email.matches('.*@svsl[.]be');
+    }
+
+    // Staat het e-mailadres in de lijst van leerkrachten?
+    function isLeerkracht() {
+      return aangemeld()
+        && exists(/databases/$(database)/documents/oef_leerkrachten/$(request.auth.token.email));
+    }
+
+    // Fiche van de leerling: naam, e-mailadres en niveaugroep
+    match /oef_leerlingen/{uid} {
+      allow read, create, update: if aangemeld() && request.auth.uid == uid;
+      allow read: if isLeerkracht();
+    }
+
+    // Resultaten: een document per leerling per module (id = uid_moduleId)
+    match /oef_resultaten/{docId} {
+      allow get: if aangemeld() && docId.matches(request.auth.uid + '_.*');
+      allow create, update: if aangemeld()
+        && request.resource.data.uid == request.auth.uid
+        && docId == request.auth.uid + '_' + request.resource.data.moduleId;
+      allow read, delete: if isLeerkracht();
+    }
+
+    // Instellingen: welke modules staan open voor de leerlingen
+    match /oef_instellingen/{document} {
+      allow read: if aangemeld();
+      allow write: if isLeerkracht();
+    }
+
+    // Lijst van leerkrachten (document-id = e-mailadres in kleine letters)
+    match /oef_leerkrachten/{email} {
+      allow get: if aangemeld() && request.auth.token.email == email;
+      allow read, write: if isLeerkracht();
+    }
+  }
+}
